@@ -31,3 +31,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# googleapi
+credentials.json
+token.json
