@@ -19,9 +19,11 @@ class GDriveClient {
     this.auth = null;
     this.drive = null;
     this.rootFolderID = "0AFNFrTMgQOutUk9PVA";
+    this.filesToIgnore = [];
   }
 
   init(cb) {
+    this.filesToIgnore = fs.readFileSync("ignore.json", "utf8") || [];
     fs.readFile("credentials.json", (err, content) => {
       if (err) return console.log("Error loading client secret file:", err);
       this.authorize(JSON.parse(content.toString()), cb);
@@ -168,7 +170,11 @@ class GDriveClient {
       q: `'me' in owners and trashed = false and (createdTime > '${isoDate}' or modifiedTime > '${isoDate}')`,
     });
 
-    const files = res?.data?.files;
+    const files = res?.data?.files.filter(
+      (f) =>
+        !f.mimeType.endsWith(".folder") && !this.filesToIgnore.includes(f.id)
+    );
+
     await Promise.all(
       files.map(async (file) => {
         this.downloadFile(file);

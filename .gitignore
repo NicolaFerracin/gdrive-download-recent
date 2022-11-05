@@ -35,3 +35,6 @@ yarn-error.log*
 # googleapi
 credentials.json
 token.json
+
+# file IDs to ignore
+ignore.json
